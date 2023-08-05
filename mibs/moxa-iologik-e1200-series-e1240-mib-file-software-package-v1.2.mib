@@ -1,0 +1,326 @@
+-- *****************************************************************
+-- Moxa Active Ethernet I/O Server MIB
+--
+-- 01-03-2013
+--
+-- Copyright (c) 2013 by Moxa Automation Co., Ltd.
+-- All rights reserved.
+-- *****************************************************************
+
+MOXA-IO-E1240-MIB DEFINITIONS ::= BEGIN
+    IMPORTS
+        enterprises, Unsigned32, Integer32, MODULE-IDENTITY, OBJECT-TYPE, NOTIFICATION-TYPE FROM SNMPv2-SMI;
+   
+-- 1.3.6.1.4.1.8691.10.1240
+    e1240   MODULE-IDENTITY
+    LAST-UPDATED "201607281500Z"
+    ORGANIZATION "Moxa Automation,Inc."
+    CONTACT-INFO
+            "Postal: Moxa Automation,Inc.
+             Fl.4, No.135,Lane 235,Pao-Chiao Rd.
+             Shing Tien City,Taipei,Taiwan,R.O.C
+             Tel: +866-2-89191230 "
+    DESCRIPTION
+            "The MIB module for Moxa ioLogik Remote Ethernet I/O specific information." 
+
+	REVISION "201607281500Z"      
+	DESCRIPTION
+            "rename description of trap item"			
+			
+	REVISION "201604011700Z"      
+	DESCRIPTION
+            "rename description of each item"
+	
+	REVISION "201601041300Z"      
+	DESCRIPTION
+            "Validate level 3 of simple web"   
+	REVISION "201512041600Z"
+    DESCRIPTION
+            "First version of this MIB."  
+    REVISION "201301031400Z"    
+    DESCRIPTION
+            "The Trap Support SNMPv2" 
+                        
+           ::= { ioLogik 1240 }    -- 1.3.6.1.4.1.8691.10.1240
+
+-- 1.3.6.1.4.1.8691
+    moxa OBJECT IDENTIFIER ::= { enterprises 8691 }
+
+-- 1.3.6.1.4.1.8691.10
+    ioLogik OBJECT IDENTIFIER ::= { moxa 10 }
+
+-- 1.3.6.1.4.1.8691.10.1240.1
+    totalChannelNumber OBJECT-TYPE
+        SYNTAX Integer32 (1..16)
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "Total I/O channels."
+        ::= { e1240 1 }
+
+-- 1.3.6.1.4.1.8691.10.1240.2
+    serverModel OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "The I/O server model."
+        ::= { e1240 2 }
+
+-- 1.3.6.1.4.1.8691.10.1240.3
+    systemTime OBJECT-TYPE
+        SYNTAX Integer32
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "I/O server up time (in seconds)."
+        ::= { e1240 3 }
+
+-- 1.3.6.1.4.1.8691.10.1240.4
+    firmwareVersion OBJECT-TYPE
+        SYNTAX OCTET STRING
+        MAX-ACCESS read-only
+        STATUS current
+        DESCRIPTION
+            "The firmware version."
+        ::= { e1240 4 }
+
+
+----------------------------------------------------------------
+-- I/O
+-- 1.3.6.1.4.1.8691.10.1240.10          
+    e1240monitor OBJECT IDENTIFIER ::= { e1240 10 }
+----------------------------------------------------------------
+-- ai
+aiTable OBJECT-TYPE
+		SYNTAX 			SEQUENCE OF AIEntry
+		MAX-ACCESS 		not-accessible
+		STATUS 			current
+		DESCRIPTION		"The ai channel monitor table"
+		::= { e1240monitor 4 }
+
+aiEntry OBJECT-TYPE
+		SYNTAX			AIEntry
+		MAX-ACCESS 		not-accessible
+		STATUS 			current
+		DESCRIPTION		"The ai channel monitor item"
+		INDEX { aiIndex }
+		::= { aiTable 1 }
+
+AIEntry ::=	SEQUENCE {
+		aiIndex		Integer32,
+		aiEnable	Integer32,
+		aiMode		Integer32,
+		aiValue		Integer32,
+		aiMin		Integer32,
+		aiMax		Integer32,
+		aiValueScaled	OCTET STRING,
+		aiValueScaledMin	OCTET STRING,
+		aiValueScaledMax	OCTET STRING,
+		aiResetMinValue		Integer32,
+		aiResetMaxValue		Integer32,
+		aiStatus		Integer32,
+		aiBurnoutValue	OCTET STRING	
+}
+-------------------------------------------
+aiIndex OBJECT-TYPE
+		SYNTAX 			Integer32(0..7)
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"AI - index"
+		::= { aiEntry 1 }
+		
+aiEnable OBJECT-TYPE
+		SYNTAX 			Integer32(0..1)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"AI - function (0: Disable, 1: Enable)"
+		::= { aiEntry 2 }
+
+aiMode OBJECT-TYPE
+		SYNTAX 			Integer32(0..4)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"AI - mode (0: 0-10 V, 1: 4-20mA, 2: 0-20mA, 4: 4-20mA burnout)"
+		::= { aiEntry 3 }
+
+
+aiValue OBJECT-TYPE
+		SYNTAX 			Integer32(0..65535)
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"AI - raw value"
+		::= { aiEntry 4 }
+		
+aiMin OBJECT-TYPE
+		SYNTAX 			Integer32(0..65535)
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"AI - minimum raw value"
+		::= { aiEntry 5 }
+		
+aiMax OBJECT-TYPE
+		SYNTAX 			Integer32(0..65535)
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"AI - maximum raw value"
+		::= { aiEntry 6 } 
+
+
+aiValueScaled OBJECT-TYPE
+		SYNTAX 			OCTET STRING
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"AI - scaled value"
+		::= { aiEntry 7 } 
+		
+aiValueScaledMin OBJECT-TYPE
+		SYNTAX 			OCTET STRING
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"AI - minimum scaled value"
+		::= { aiEntry 8 }
+
+aiValueScaledMax OBJECT-TYPE
+		SYNTAX 			OCTET STRING
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"AI - maximum scaled value"
+		::= { aiEntry 9 } 		
+
+aiResetMinValue OBJECT-TYPE
+		SYNTAX 			Integer32(0..1)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"AI - reset minimum value (1: RESET)"
+		::= { aiEntry 10 }
+
+aiResetMaxValue OBJECT-TYPE
+		SYNTAX 			Integer32(0..1)
+		MAX-ACCESS 		read-write
+		STATUS 			current
+		DESCRIPTION		"AI - reset maximum value (1: RESET)"
+		::= { aiEntry 11 }
+		
+aiStatus OBJECT-TYPE
+		SYNTAX 			Integer32(0..3)
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"AI - status (0: normal, 1: burnout, 2: over range, 3. under range)"
+		::= { aiEntry 12 }
+	
+aiBurnoutValue OBJECT-TYPE
+		SYNTAX 			OCTET STRING
+		MAX-ACCESS 		read-only
+		STATUS 			current
+		DESCRIPTION		"AI - burnout value"
+		::= { aiEntry 13 }		
+		
+----------------------------------------------------------------
+-- AI TRAP Greater
+-- 1.3.6.1.4.1.8691.10.1240.22
+    aiTrapGreater OBJECT IDENTIFIER ::= { e1240 22 }
+
+----------------------------------------------------------------
+aiTrapG0 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-00 - raw value greater than threshold"
+        ::= { aiTrapGreater 1 }
+
+aiTrapG1 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-01 - raw value greater than threshold"
+        ::= { aiTrapGreater 2 }
+
+aiTrapG2 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-02 - raw value greater than threshold"
+        ::= { aiTrapGreater 3 }
+
+aiTrapG3 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-03 - raw value greater than threshold"
+        ::= { aiTrapGreater 4 }
+
+aiTrapG4 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-04 - raw value greater than threshold"
+        ::= { aiTrapGreater 5 }
+
+aiTrapG5 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-05 - raw value greater than threshold"
+        ::= { aiTrapGreater 6 }   
+        
+aiTrapG6 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-06 - raw value greater than threshold"
+        ::= { aiTrapGreater 7 }
+
+aiTrapG7 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-07 - raw value greater than threshold"
+        ::= { aiTrapGreater 8 }
+
+
+
+----------------------------------------------------------------
+-- AI TRAP Smaller
+-- 1.3.6.1.4.1.8691.10.1240.23
+    aiTrapSmaller OBJECT IDENTIFIER ::= { e1240 23 }
+
+----------------------------------------------------------------   
+aiTrapS0 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-00 - raw value smaller than threshold"
+        ::= { aiTrapSmaller 1 }
+
+aiTrapS1 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-01 - raw value smaller than threshold"
+        ::= { aiTrapSmaller 2 }
+        
+aiTrapS2 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-02 - raw value smaller than threshold"
+        ::= { aiTrapSmaller 3 }
+        
+aiTrapS3 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-03 - raw value smaller than threshold"
+        ::= { aiTrapSmaller 4 }
+
+aiTrapS4 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-04 - raw value smaller than threshold"
+        ::= { aiTrapSmaller 5 }
+
+aiTrapS5 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-05 - raw value smaller than threshold"
+        ::= { aiTrapSmaller 6 }
+        
+aiTrapS6 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-06 - raw value smaller than threshold"
+        ::= { aiTrapSmaller 7 } 
+        
+aiTrapS7 NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 		"AI-07 - raw value smaller than threshold"
+        ::= { aiTrapSmaller 8 }
+
+        
+----------------------------------------------------------------
+-- Message TRAP
+-- 1.3.6.1.4.1.8691.10.1240.30
+	messageTrap OBJECT IDENTIFIER ::= { e1240 30 }
+
+----------------------------------------------------------------
+activeMessageTrap NOTIFICATION-TYPE
+		STATUS current
+		DESCRIPTION 	"The SNMP trap with active message"
+        ::= { messageTrap 1 }
+END
+
+
